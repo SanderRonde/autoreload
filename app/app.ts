@@ -13,6 +13,9 @@ export interface SharedOptions {
 	 * What port to use for the websocket endpoint
 	 */
 	port?: number;
+}
+
+export interface ServeOptions extends SharedOptions {
 	/**
 	 * At what path to serve the __autoreload.js file
 	 */
@@ -53,7 +56,7 @@ export interface WatcherOptions extends SharedOptions {
  * Serve the auto reload file using your regular endpoint. This is needed
  * to make sure the frontend can fetch the autoreload JS
  *
- * @param {SharedOptions} [options] - Options for this serve function
+ * @param {ServeOptions} [options] - Options for this serve function
  * @param {number} [options.port] - The port on which to listen
  * @param {string} [options.servePath] - The path at which to serve
  * 	the __autoreload.js file
@@ -61,7 +64,7 @@ export interface WatcherOptions extends SharedOptions {
  * @returns {(req: http.IncomingMessage, res: http.ServerResponse, next: (err?: Error) => void) => void} A connect-style function
  */
 export function serveReload(
-	options?: SharedOptions
+	options?: ServeOptions
 ): (
 	req: http.IncomingMessage,
 	res: http.ServerResponse,
