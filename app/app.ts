@@ -72,12 +72,6 @@ export function serveReload(
 ) => void {
 	const port = options?.port || DEFAULT_WS_PORT;
 	const servePath = options?.servePath || DEFAULT_SERVE_PATH;
-	if (typeof port !== 'number') {
-		throw new Error('Port is not a number');
-	}
-	if (typeof servePath !== 'string') {
-		throw new Error('Serve path is not a string');
-	}
 
 	const rawFile = fs.readFileSync(
 		path.join(__dirname, 'static', 'autoreload.js'),
@@ -122,12 +116,6 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 	// IO
 	const port = options?.port || DEFAULT_WS_PORT;
 	const paths = options?.paths || [];
-	if (typeof port !== 'number') {
-		throw new Error('Port is not a number');
-	}
-	if (!Array.isArray(paths)) {
-		throw new Error('Paths is not an array');
-	}
 
 	const logSettings: Required<WatcherOptions['log']> = {
 		file:
@@ -234,6 +222,5 @@ export function autoReload(
 	autoReloadWatcher(options);
 	return serveReload(options);
 }
-
 
 export const includeHTML = '<script src="/__autoreload.js"></script>';
