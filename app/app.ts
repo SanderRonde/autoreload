@@ -104,7 +104,7 @@ export function serveReload(
 }
 
 function log(msg: string) {
-	process.stdout.write(`${kleur.blue('[ autoreload ]')} - ${msg}`);
+	process.stdout.write(`${kleur.blue('[ autoreload ]')} - ${msg}\n`);
 }
 
 /**
@@ -183,8 +183,9 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 				options: watchPathConfig.options || {},
 			};
 		})();
+		const watcher = chokidar.watch(watchPath, options);
 		events.forEach((event) => {
-			chokidar.watch(watchPath, options).on(event, (changePath) => {
+			watcher.on(event, (changePath) => {
 				versionIndex++;
 
 				if (logSettings.file) {
