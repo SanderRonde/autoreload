@@ -9,7 +9,8 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^14.0.1",
-		"@types/ws": "^7.2.4"
+		"@types/ws": "^7.2.4",
+		"rimraf": "^3.0.2"
 	},
 	"files": [
 		"build/**/*.ts",
@@ -22,6 +23,7 @@
 		"ws": "^7.3.0"
 	},
 	"scripts": {
+		"prepack": "rimraf build/ && npm run build",
 		"build": "tsc --build"
 	}
 }
