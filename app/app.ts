@@ -23,8 +23,17 @@ export interface ServeOptions extends SharedOptions {
 }
 
 export interface WatchPathConfig {
+	/**
+	 * The path to watch
+	 */
 	watchPath: string;
+	/**
+	 * Events to listen for
+	 */
 	events?: ('change' | 'add' | 'addDir')[];
+	/**
+	 * Options for chokidar
+	 */
 	options?: chokidar.WatchOptions;
 }
 
