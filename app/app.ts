@@ -93,6 +93,8 @@ export function serveReload(
 			return next();
 		}
 
+		res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+		res.setHeader('Content-Length', file.length);
 		res.write(file);
 		res.end();
 	};
