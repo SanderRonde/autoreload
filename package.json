@@ -1,8 +1,9 @@
 {
-	"name": "autoreload",
+	"name": "@sanderronde/autoreload",
 	"version": "1.0.0",
 	"description": "A simple package for reloading your frontend when something changes",
-	"main": "app/app.js",
+	"main": "build/cjs/app.js",
+	"module": "build/es/app.js",
 	"repository": "https://github.com/SanderRonde/autoreload",
 	"author": "Sander Ronde <awsdfgvhbjn@gmail.com>",
 	"license": "MIT",
