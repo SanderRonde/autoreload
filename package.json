@@ -1,6 +1,6 @@
 {
 	"name": "@sanderronde/autoreload",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "A simple package for reloading your frontend when something changes",
 	"main": "build/cjs/app.js",
 	"module": "build/es/app.js",
