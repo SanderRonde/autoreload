@@ -234,3 +234,6 @@ export function autoReload(
 	autoReloadWatcher(options);
 	return serveReload(options);
 }
+
+
+export const includeHTML = '<script src="/__autoreload.js"></script>';
