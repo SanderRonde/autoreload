@@ -173,13 +173,13 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 			if (typeof watchPathConfig === 'string') {
 				return {
 					watchPath: watchPathConfig,
-					events: ['add'],
+					events: ['change'],
 					options: {},
 				};
 			}
 			return {
 				watchPath: watchPathConfig.watchPath,
-				events: watchPathConfig.events || ['add'],
+				events: watchPathConfig.events || ['change'],
 				options: watchPathConfig.options || {},
 			};
 		})();
