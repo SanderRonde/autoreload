@@ -141,7 +141,7 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 		reload:
 			typeof options?.log?.reload === 'boolean'
 				? options?.log?.reload
-				: false,
+				: true,
 	};
 
 	// Record sessions
