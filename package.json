@@ -23,7 +23,8 @@
 		"ws": "^7.3.0"
 	},
 	"scripts": {
-		"prepack": "rimraf build/ && npm run build",
+		"copy-source": "node -e \"require('fs').copyFile('app/static/autoreload.ts', 'build/es/static/autoreload.ts', () => {}); require('fs').copyFile('app/static/autoreload.ts', 'build/cjs/static/autoreload.ts', () => {})\"",
+		"prepack": "rimraf build/ && npm run build && npm run copy-source",
 		"build": "tsc --build"
 	}
 }
