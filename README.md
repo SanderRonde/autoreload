@@ -66,6 +66,7 @@ For more info about what the `chokidar` config looks like, check out [its github
 -   `[options]` (object) Optional options object
 -   `[options.port]` (number, default: 1238) The port on which to host the websocket server
 -   `[options.servePath]` (string, default: `__autoreload.js`) The path at which to serve the file the client will download
+-   `[options.maps]` (boolean, default: true) Whether to serve .map.js and .ts files
 -   `returns` a connect-style handler that should be used by your app.
 
 `autoReloadWatcher([options])` - Sets up the watcher and reloader. Split up version of `autoReload` in case you want to do both steps at different places.

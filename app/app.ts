@@ -20,6 +20,10 @@ export interface ServeOptions extends SharedOptions {
 	 * At what path to serve the __autoreload.js file
 	 */
 	servePath?: string;
+	/**
+	 * Whether to serve .map.js and .ts files
+	 */
+	maps?: boolean;
 }
 
 export interface WatchPathConfig {
@@ -61,6 +65,13 @@ export interface WatcherOptions extends SharedOptions {
 	paths?: (WatchPathConfig | string)[];
 }
 
+function serveFile(res: http.ServerResponse, file: string, mimeType: string) {
+	res.setHeader('Content-Type', `${mimeType}; charset=UTF-8`);
+	res.setHeader('Content-Length', file.length);
+	res.write(file);
+	res.end();
+}
+
 /**
  * Serve the auto reload file using your regular endpoint. This is needed
  * to make sure the frontend can fetch the autoreload JS
@@ -69,6 +80,7 @@ export interface WatcherOptions extends SharedOptions {
  * @param {number} [options.port] - The port on which to listen
  * @param {string} [options.servePath] - The path at which to serve
  * 	the __autoreload.js file
+ * @param {boolean} [options.maps] - Whether to serve .map.js and .ts files
  *
  * @returns {(req: http.IncomingMessage, res: http.ServerResponse, next: (err?: Error) => void) => void} A connect-style function
  */
@@ -81,28 +93,51 @@ export function serveReload(
 ) => void {
 	const port = options?.port || DEFAULT_WS_PORT;
 	const servePath = options?.servePath || DEFAULT_SERVE_PATH;
+	const serveMaps = options?.maps ?? true;
+	const { dir, name: serveName } = path.parse(servePath);
+	const mapPath = path.join(dir, `${serveName}.js.map`);
+	const tsPath = path.join(dir, `${serveName}.ts`);
 
-	const rawFile = fs.readFileSync(
-		path.join(__dirname, 'static', 'autoreload.js'),
-		{
+	const file = fs
+		.readFileSync(path.join(__dirname, 'static', 'autoreload.js'), {
 			encoding: 'utf8',
-		}
-	);
-	const file = rawFile.replace(/PORT/, port + '');
+		})
+		.replace(/PORT/, port + '');
+
+	let mapFile: string | null = null;
+	let tsFile: string | null = null;
+	if (serveMaps) {
+		mapFile = fs.readFileSync(
+			path.join(__dirname, 'static', 'autoreload.js.map'),
+			{
+				encoding: 'utf8',
+			}
+		);
+		tsFile = fs
+			.readFileSync(path.join(__dirname, 'static', 'autoreload.ts'), {
+				encoding: 'utf8',
+			})
+			.replace(/PORT/, port + '');
+	}
 
 	return (
 		req: http.IncomingMessage,
 		res: http.ServerResponse,
 		next: (err?: Error) => void
 	) => {
-		if (!req.url || req.url !== servePath) {
-			return next();
+		if (!req.url) return next();
+		if (req.url === servePath) {
+			return serveFile(res, file, 'application/javascript');
+		}
+		if (serveMaps) {
+			if (req.url === mapPath) {
+				return serveFile(res, mapFile!, 'application/json');
+			} else if (req.url === tsPath) {
+				return serveFile(res, tsFile!, 'application/x-typescript');
+			}
 		}
 
-		res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-		res.setHeader('Content-Length', file.length);
-		res.write(file);
-		res.end();
+		next();
 	};
 }
 
