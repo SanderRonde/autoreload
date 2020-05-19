@@ -88,7 +88,7 @@ export function serveReload(
 			encoding: 'utf8',
 		}
 	);
-	const file = rawFile.replace(/WS_PORT/, port + '');
+	const file = rawFile.replace(/PORT/, port + '');
 
 	return (
 		req: http.IncomingMessage,
