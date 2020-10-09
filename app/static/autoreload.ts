@@ -1,4 +1,4 @@
-declare const WS_PORT: number;
+declare const PORT: number;
 
 {
 	function getCookie<V extends string>(name: string): string | V | undefined {
@@ -51,7 +51,7 @@ declare const WS_PORT: number;
 
 	function connect() {
 		const ws = new WebSocket(
-			`ws://${location.hostname}:${WS_PORT}/__autoreload`
+			`ws://${location.hostname}:${PORT}/__autoreload`
 		);
 		ws.onclose = () => window.setTimeout(connect, 1500);
 

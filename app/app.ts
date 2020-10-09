@@ -23,8 +23,17 @@ export interface ServeOptions extends SharedOptions {
 }
 
 export interface WatchPathConfig {
+	/**
+	 * The path to watch
+	 */
 	watchPath: string;
+	/**
+	 * Events to listen for
+	 */
 	events?: ('change' | 'add' | 'addDir')[];
+	/**
+	 * Options for chokidar
+	 */
 	options?: chokidar.WatchOptions;
 }
 
@@ -52,6 +61,13 @@ export interface WatcherOptions extends SharedOptions {
 	paths?: (WatchPathConfig | string)[];
 }
 
+function serveFile(res: http.ServerResponse, file: string, mimeType: string) {
+	res.setHeader('Content-Type', `${mimeType}; charset=UTF-8`);
+	res.setHeader('Content-Length', file.length);
+	res.write(file);
+	res.end();
+}
+
 /**
  * Serve the auto reload file using your regular endpoint. This is needed
  * to make sure the frontend can fetch the autoreload JS
@@ -72,37 +88,29 @@ export function serveReload(
 ) => void {
 	const port = options?.port || DEFAULT_WS_PORT;
 	const servePath = options?.servePath || DEFAULT_SERVE_PATH;
-	if (typeof port !== 'number') {
-		throw new Error('Port is not a number');
-	}
-	if (typeof servePath !== 'string') {
-		throw new Error('Serve path is not a string');
-	}
 
-	const rawFile = fs.readFileSync(
-		path.join(__dirname, 'static', 'autoreload.js'),
-		{
+	const file = fs
+		.readFileSync(path.join(__dirname, 'static', 'autoreload.js'), {
 			encoding: 'utf8',
-		}
-	);
-	const file = rawFile.replace(/WS_PORT/, port + '');
+		})
+		.replace(/PORT/, port + '');
 
 	return (
 		req: http.IncomingMessage,
 		res: http.ServerResponse,
 		next: (err?: Error) => void
 	) => {
-		if (!req.url || req.url !== servePath) {
-			return next();
+		if (!req.url) return next();
+		if (req.url === servePath) {
+			return serveFile(res, file, 'application/javascript');
 		}
 
-		res.write(file);
-		res.end();
+		next();
 	};
 }
 
 function log(msg: string) {
-	process.stdout.write(`${kleur.blue('[ autoreload ]')} - ${msg}`);
+	process.stdout.write(`${kleur.blue('[ autoreload ]')} - ${msg}\n`);
 }
 
 /**
@@ -120,12 +128,6 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 	// IO
 	const port = options?.port || DEFAULT_WS_PORT;
 	const paths = options?.paths || [];
-	if (typeof port !== 'number') {
-		throw new Error('Port is not a number');
-	}
-	if (!Array.isArray(paths)) {
-		throw new Error('Paths is not an array');
-	}
 
 	const logSettings: Required<WatcherOptions['log']> = {
 		file:
@@ -139,7 +141,7 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 		reload:
 			typeof options?.log?.reload === 'boolean'
 				? options?.log?.reload
-				: false,
+				: true,
 	};
 
 	// Record sessions
@@ -171,18 +173,19 @@ export function autoReloadWatcher(options?: WatcherOptions) {
 			if (typeof watchPathConfig === 'string') {
 				return {
 					watchPath: watchPathConfig,
-					events: ['add'],
+					events: ['change'],
 					options: {},
 				};
 			}
 			return {
 				watchPath: watchPathConfig.watchPath,
-				events: watchPathConfig.events || ['add'],
+				events: watchPathConfig.events || ['change'],
 				options: watchPathConfig.options || {},
 			};
 		})();
+		const watcher = chokidar.watch(watchPath, options);
 		events.forEach((event) => {
-			chokidar.watch(watchPath, options).on(event, (changePath) => {
+			watcher.on(event, (changePath) => {
 				versionIndex++;
 
 				if (logSettings.file) {
@@ -231,3 +234,5 @@ export function autoReload(
 	autoReloadWatcher(options);
 	return serveReload(options);
 }
+
+export const includeHTML = '<script src="/__autoreload.js"></script>';
