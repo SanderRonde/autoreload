@@ -20,10 +20,8 @@
 		"strictBindCallApply": true,
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
-		"sourceMap": true,
 		"resolveJsonModule": true,
-		"outDir": "../build/es",
-		"composite": true
+		"outDir": "../build/es"
 	},
 	"compileOnSave": true,
 	"include": ["./"]

@@ -20,10 +20,8 @@
 		"strictBindCallApply": true,
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
-		"sourceMap": true,
 		"resolveJsonModule": true,
-		"outDir": "../build/cjs",
-		"composite": true
+		"outDir": "../build/cjs"
 	},
 	"compileOnSave": true,
 	"include": ["./"]

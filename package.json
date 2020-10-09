@@ -16,6 +16,6 @@
 		"ws": "^7.3.0"
 	},
 	"scripts": {
-		"build": "tsc --build"
+		"build": "tsc -p app/tsconfig.json && tsc -p app/tsconfig.cjs.json"
 	}
 }
