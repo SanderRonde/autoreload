@@ -1,6 +1,6 @@
 {
 	"name": "autoreload",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A simple package for reloading your frontend when something changes",
 	"main": "app/app.js",
 	"repository": "https://github.com/SanderRonde/autoreload",
